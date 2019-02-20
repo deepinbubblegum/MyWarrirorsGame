@@ -70,6 +70,11 @@ public class GameView extends View
         Rect dst = new Rect(0,0,getWidth(),getHeight());
         canvas.drawBitmap(map,src,dst,null);
 
+        Bitmap wasdbt = BitmapFactory.decodeResource(getResources(),R.drawable.wasd);
+        Rect srcwasd = new Rect(0,0,wasdbt.getWidth(),wasdbt.getHeight());
+        Rect dstwasd = new Rect(0,getHeight() - 300,300,getHeight());
+        canvas.drawBitmap(wasdbt,srcwasd,dstwasd,null);
+
         Bitmap xbutton = BitmapFactory.decodeResource(getResources(),
                 R.drawable.xbutton);
         Rect srcx = new Rect(0,0,xbutton.getWidth(),xbutton.getHeight());
@@ -84,6 +89,12 @@ public class GameView extends View
 
         super.onDraw(canvas);
         hero.onDraw(canvas);
+
+        Paint pb = new Paint();
+        pb.setColor(Color.argb(100,255,0,0));
+        if (barrier)
+            canvas.drawCircle(hero.x+hero.width/2,hero.y+hero.height/2,200,pb);
+
         for (Enemy enemy : enemies) {
              enemy.onDraw(canvas);
         }
@@ -110,20 +121,36 @@ public class GameView extends View
     }
 
     int score = 0;
+    boolean barrier = false;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
         int tx = (int)event.getX();
         int ty = (int)event.getY();
-        if(tx>hero.x)
-            hero.xSpeed = 30;
-        if(tx<hero.x)
-            hero.xSpeed = -30;
-        if(ty>hero.y)
-            hero.ySpeed = 30;
-        if(ty<hero.y)
+
+        if (tx > getWidth() - 400 && tx < getWidth() - 200 && ty > getHeight() - 400 && tx < getHeight() - 200)
+            barrier = !barrier;
+
+
+//        UP
+        if(tx > 100 && tx < 200 && ty > getHeight() - 300 && ty < getHeight() - 200 )
             hero.ySpeed = -30;
+        if ((tx > 200 && tx < 300 ) && (ty > getHeight() - 200 && ty < getHeight() - 100))
+            hero.xSpeed = 30;
+//        down
+        if ((tx > 100 && tx < 200 ) && (ty > getHeight() - 200 && ty < getHeight()))
+            hero.ySpeed = 30;
+        if ((tx > 0 && tx < 100 )&&(ty > getHeight()-200 && ty < getHeight() -100))
+            hero.xSpeed = -30;
+//        if(tx>hero.x)
+//            hero.xSpeed = 30;
+//        if(tx<hero.x)
+//            hero.xSpeed = -30;
+//        if(ty>hero.y)
+//            hero.ySpeed = 30;
+//        if(ty<hero.y)
+//            hero.ySpeed = -30;
         if(event.getAction()== MotionEvent.ACTION_UP)
         {
             hero.xSpeed=0;
